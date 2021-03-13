@@ -1,0 +1,10 @@
+npx wordpress-export-to-markdown --post-folders=false --prefix-date=true
+
+docker run --expose 3306 --hostname whattheballs-db --name whattheballs-db --env MYSQL_ROOT_PASSWORD=whattheballs --volume /home/kenners/whattheballs/:/mnt/whattheballs --detach mariadb
+docker exec -it whattheballs-db bash
+cd /mnt/whattheballs
+/usr/bin/gzip -c -d mysql/wordpress.gz | mysql -uroot -pwhattheballs
+mysql -uroot -pwhattheballs -D wordpress -e 'select u.user_nicename, p.post_date, p.post_name, p.post_title from wp_posts p join wp_users u where p.post_author=u.id and p.post_status like "publish" order by p.post_date asc' > /mnt/whattheballs/author-info.txt
+
+
+select u.user_nicename, p.post_date, p.post_name, p.post_title from wp_posts p join wp_users u where p.post_author=u.id and p.post_status like "publish" order by p.post_date asc;
